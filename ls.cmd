@@ -119,14 +119,18 @@ for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
         set /a "dirSize+=%%S"
     )
     set /a totalsize+=!dirSize!
+    ::set /a totalsize=!totalsize! / 2
+    if !totalsize! lss 0 (
+        set /a totalsize=!totalsize! * -1
+    )
     set /a counter+=1
     if errorlevel == 0 (
     echo %grey%!counter!│ %red%%currentDirName% %yellow%%%D %green%!dirSize!%grey%B %blue%!fileCreationDate:~0,10! %dkpurple%%cd%\%%D\ %reg%
     )
 )
 rem do some math
-set /a gb=!totalsize! / 1000000000
-echo  %grey%└───%grey%TC:%green%!counter! %grey%TS:%green%!totalsize!%grey%B%reg% %grey%TS:%green%!gb!%grey%GB%reg%
+set /a gb=!totalsize! / 1000000
+echo  %grey%└───%grey%TC:%green%!counter! %grey%TS:%green%!totalsize!%grey%B%reg% %grey%TS:%green%!gb!%grey%MB%reg%
 goto eof
 
 
@@ -299,7 +303,7 @@ echo Usage: ls --expand
 echo.
 echo Description,
 echo    Expand function displays various types of data for the user to see.
-echo    including Root File, File Name, File Size (B, GB), Date Edited, and Path
+echo    including Root File, File Name, File Size (B, MB), Date Edited, and Path
 echo.
 echo Model,
 echo.
@@ -307,7 +311,7 @@ echo    %grey%   📂 C:\(Your Directory)
 echo    %grey%   │
 echo    %grey% 1 │ %red%Root Folder%reg% %yellow%File Name%reg% %green%File Size%reg% %blue%Date Created/Edited%reg% %purple%Path (file)%reg%
 echo    %grey% 2 │ %red%Root Folder%reg% %yellow%File Name%reg% %green%File Size%reg% %blue%Date Created/Edited%reg% %dkpurple%Path (dir)%reg%
-echo    %grey%   └───TC:%green%(Total Content) %grey%TS:%green%(Total Size Bytes) %grey%TS:%green%(Total Size GigaBytes)%reg%
+echo    %grey%   └───TC:%green%(Total Content) %grey%TS:%green%(Total Size Bytes) %grey%TS:%green%(Total Size MegaBytes)%reg%
 echo.
 goto eof
 :helpbreak
