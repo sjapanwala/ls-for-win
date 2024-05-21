@@ -27,6 +27,7 @@ set grey=[90m
 set currentFile=%~n0%~x0
 set nameonly=%~n0
 :start_file
+if "%1" == "--init" goto initializeprog
 if "%1" == "-r" goto recur
 if "%1" == "--recursive" goto recur
 if "%1" == "-ex" goto expand
@@ -306,6 +307,8 @@ echo    --logs           recent update logs
 echo.
 echo    --update         apply updates
 echo.
+echo    --init            initialize the program to work globally. NEEDS ADMINISTRATION ACCESS FOR SETUP.
+echo.
 echo Notes,
 echo    -^> (HS) - Help Supported (-ex, -bd, -ls)
 goto eof
@@ -497,9 +500,14 @@ call :listFiles "%startDir%"
 exit /b
 
 :listFiles
+if %counterdir% lss 10 (
+    set paddedcounterdir=0%counterdir%
+) else (
+    set paddedcounterdir=%counterdir%
+)
 set /a counterdir+=1
 set "currentDir=%~1"
-echo %grey%!counterdir! %reg%^| %dkpurple%%currentDir%%reg%
+echo %grey%!paddedcounterdir! %reg%^| %dkblue%R↓ ^| %dkpurple%%currentDir%%reg%
 for %%I in ("%currentDir%") do (
     set direpre=%%~nI
 )
@@ -507,8 +515,13 @@ REM Use a for loop to iterate through files and directories
 if not defined direpre (
     set direpre=root
 )
+if %counterdir% lss 10 (
+    set paddedcounterdir=0%counterdir%
+) else (
+    set paddedcounterdir=%counterdir%
+)
 for %%I in ("%CD%") do set "currentDirName=%%~nI"
-(for /f "delims=" %%A in ('dir /b /a-d "%currentDir%"') do set /a totalcount +=1 && echo %grey%!counterdir! %reg%^| %red%%currentDirName%  %yellow%%direpre% %green%%%A%reg%)2>nul
+(for /f "delims=" %%A in ('dir /b /a-d "%currentDir%"') do set /a totalcount +=1 && echo %grey%!paddedcounterdir! %reg%^| %red%%currentDirName%  %yellow%%direpre% %green%%%A%reg%)2>nul
 for /f "delims=" %%D in ('dir /b /ad "%currentDir%"') do set direpre=%currentDir%\%%D && call :listFiles "%currentDir%\%%D" 
 goto eof
 
@@ -556,6 +569,13 @@ echo --readme, -R -^> access readme
 echo --legal, -l  -^> access legal and Credits
 echo -sec         -^> show error codes
 echo.
+goto eof
+
+:initializeprog
+:: check if init has already happened.
+if exist "C:\Windows\%currentFile%" (
+    echo ls: Program Is Already Initialized.
+)
 goto eof
 
 :eof
