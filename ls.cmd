@@ -108,7 +108,7 @@ if "%1" == "-l" (
 if "%1" == "--legal" (
     goto legal
 )
-if "%1" == "-r" (
+if "%1" == "-R" (
     goto readme
 )
 if "%1" == "--readme" (
@@ -284,7 +284,7 @@ echo                     -^> with no args, will shows general help
 echo                     -^> [-a]    help about everything
 echo                     -^> Specific Command Help (ls --help [-command])
 echo.
-echo    -r, --readme    redirects you to the readme file on www.github.com/sjapanwala
+echo    -R, --readme    redirects you to the readme file on www.github.com/sjapanwala
 echo.
 echo    -l, --legal     shows all legal information about this program.
 echo.
@@ -473,7 +473,7 @@ echo SOFTWARE.
 echo.
 goto eof
 :readme
-start www.github.com/sjapanwala
+start https://github.com/sjapanwala/ls-for-win
 goto eof
 
 :recur
@@ -541,7 +541,7 @@ echo - access the updates and new featres. (you are here right now)
 echo    -^> Usage: ls --logs
 echo.
 echo %blue%Minor Updates%reg%   
-echo --readme, -r -^> access readme
+echo --readme, -R -^> access readme
 echo --legal, -l  -^> access legal and Credits
 echo -sec         -^> show error codes
 echo.
