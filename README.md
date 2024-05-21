@@ -1,3 +1,5 @@
+```curl https://raw.githubusercontent.com/sjapanwala/ls-for-win/main/ls.cmd>ls.cmd```
+
 ```txt
 Listing Your Files Inside Your Terminal
 Lists files inside the current directory by default
