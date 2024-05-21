@@ -1,4 +1,6 @@
-```curl https://raw.githubusercontent.com/sjapanwala/ls-for-win/main/ls.cmd>ls.cmd```
+```cmd
+curl https://raw.githubusercontent.com/sjapanwala/ls-for-win/main/ls.cmd>ls.cmd
+```
 
 ```txt
 Listing Your Files Inside Your Terminal
