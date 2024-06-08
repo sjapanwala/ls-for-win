@@ -343,7 +343,7 @@ echo %reg%Searching for %green%%filetype%%reg% file types in directory %green%%c
 echo.
 set filefound=False
 set counter=0
-for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%\*%filetype%"2^>nul') do (
+for /f "delims=" %%F in ('dir /b /a:-d-h "%dir  ectory%\*%filetype%"2^>nul') do (
     set filefound=True
     set /a counter+=1
     echo %grey%!counter! │ %reg%%%F%reg%
@@ -614,7 +614,7 @@ for /R %%F in (*) do (
     if "!filename!" == "!curr_file!" (
         set "filefound=True"
         set /a found_counter+=1
-        echo %green% Exact Match %reg%    %purple%!curr_file!    %blue%%%~xF    %yellow%%%~dpF!curr_file!%reg%
+        echo %green% Exact Match %reg%    %purple%%%~nF %blue%%%~xF    %yellow%%%~dpF%purple%!curr_file!%reg%
     )
 )
 
@@ -626,7 +626,7 @@ set "clean_redo=%%~nF"
 if "!clean_redo!" == "!possiblefile!" (
     set /a similiar_counter+=1
     set "filefound=True"
-    echo %red% Similiar Name%reg%   %purple%!curr_file_redo!    %blue%%%~xF    %yellow%%%~dpF!curr_file_redo!%reg%
+    echo %red% Similiar Name%reg%   %purple%%%~nF %blue%%%~xF    %yellow%%%~dpF%purple%!curr_file_redo!%reg%
     )
 )
 rem Check if no files were found
