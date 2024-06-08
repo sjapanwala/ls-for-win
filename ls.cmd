@@ -34,6 +34,26 @@ if "%1" == "-ex" goto expand
 if "%1" == "--expand" goto expand
 if "%1" == "-tr" goto tree
 if "%1" == "--legacy" goto tree
+if "%1" == "-s" (
+    if not "%2" == "" (
+        set filename=%2
+        goto searchfile
+    ) else (
+        echo ls: Invalid Structure. no [FILE] arguement given
+        echo ls: Please Try "%nameonly% --help"
+        goto eof
+    )
+)
+if "%1" == "--search" (
+    if not "%2" == "" (
+        set filename=%2
+        goto searchfile
+    ) else (
+        echo ls: Invalid Structure. no [FILE] arguement given
+        echo ls: Please Try "%nameonly% --help"
+        goto eof
+    )
+)
 if "%1" == "" goto basic
 if "%1" == "--help" (
     if "%2" == "-ex" (
@@ -289,6 +309,8 @@ echo                                 REQUIRES DIR NAME IN FILE
 echo.
 echo    -r, --recursive              recursively lists everything from current dir, down.
 echo                                 larger files may take longer to process.
+echo.
+echo    -s, --search                 recursivly search for a specific filename, will also provide files with similiar names
 echo.
 echo OTHER: Other commands that are for management, and other cases.
 echo    -?, -h, --help   shows help menu, Usage: ls --help [OTHER]
@@ -577,6 +599,47 @@ if exist "C:\Windows\%currentFile%" (
     echo ls: Program Is Already Initialized.
 )
 goto eof
+
+:searchfile
+set "filefound=False"
+set /a found_counter=0
+set /a scancount=0
+set /a similiar_counter=0
+for %%F in ("%filename%") do set possiblefile=%%~nF
+
+rem Start searching from the current directory
+for /R %%F in (*) do (
+    set /a scancount+=1
+    set "curr_file=%%~nxF"
+    if "!filename!" == "!curr_file!" (
+        set "filefound=True"
+        set /a found_counter+=1
+        echo %green% Exact Match %reg%    %purple%!curr_file!    %blue%%%~xF    %yellow%%%~dpF!curr_file!%reg%
+    )
+)
+
+echo.
+for /R %%F in (*) do (
+set /a scancount+=1
+set "curr_file_redo=%%~nxF"
+set "clean_redo=%%~nF"
+if "!clean_redo!" == "!possiblefile!" (
+    set /a similiar_counter+=1
+    set "filefound=True"
+    echo %red% Similiar Name%reg%   %purple%!curr_file_redo!    %blue%%%~xF    %yellow%%%~dpF!curr_file_redo!%reg%
+    )
+)
+rem Check if no files were found
+if !found_counter!==0 (
+    if !similiar_counter!==0 (
+        echo ls: Locate Error
+        echo ls: There was no such file found.
+    )
+)
+echo.
+echo  Scanned !scancount! File^(s^), Exact Files !found_counter! File^(s^), Similiar Files !similiar_counter! File^(s^)
+goto eof
+
 
 :eof
 if "%1" == -sec (
