@@ -28,6 +28,8 @@ OPTIONS: Options are required for a customized view, else will show basic ls lis
    -r, --recursive              recursively lists everything from current dir, down.
                                 larger files may take longer to process.
 
+   -s, --search                 recursivly search for a specific filename, will also provide files with similiar names
+
 OTHER: Other commands that are for management, and other cases.
    -?, -h, --help   shows help menu, Usage: ls --help [OTHER]
                     -> with no args, will shows general help
@@ -44,6 +46,8 @@ OTHER: Other commands that are for management, and other cases.
    --logs           recent update logs
 
    --update         apply updates
+
+   --init            initialize the program to work globally. NEEDS ADMINISTRATION ACCESS FOR SETUP.
 
 Notes,
    -> (HS) - Help Supported (-ex, -bd, -ls)
