@@ -624,6 +624,7 @@ set /a scancount+=1
 set "curr_file_redo=%%~nxF"
 set "clean_redo=%%~nF"
 if "!clean_redo!" == "!possiblefile!" (
+    if !similiar_counter! == 0 echo  Similiar Results,
     set /a similiar_counter+=1
     set "filefound=True"
     echo %red% Similiar Name%reg%   %purple%%%~nF %blue%%%~xF    %yellow%%%~dpF%purple%!curr_file_redo!%reg%
@@ -632,8 +633,7 @@ if "!clean_redo!" == "!possiblefile!" (
 rem Check if no files were found
 if !found_counter!==0 (
     if !similiar_counter!==0 (
-        echo ls: Locate Error
-        echo ls: There was no such file found.
+        echo ls: No files matched query
     )
 )
 echo.
