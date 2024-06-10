@@ -286,53 +286,35 @@ echo.
 echo.
 echo Listing Your Files Inside Your Terminal 
 echo Lists files inside the current directory by default
-::echo Made By %green%Saaim Japanwala%reg%
+echo Made By %green%Saaim Japanwala%reg%
 echo.             
-echo Usage: %nameonly% [OPTION]... [FILE]... [CODE]...
+echo Usage: %nameonly% [OPTION]... [FILEARG]... [ARG]...
 echo.
 echo OPTIONS: Options are required for a customized view, else will show basic ls listing.
-echo    -ex, --expand                expandable  info, shows brief information about the file (listed)
-echo                                 (format for -ex: rootdirname filename filesize(B,MB,GB) editdate rootpath), (HS)
 echo.
-echo    -nt, --neat                  neat, neatly organizes all the files in a horizontal list
+echo    [4mOPTION[0m                  [4mFILEARG[0m      [4mDefinition[0m
+echo    -ex,  --expand                       expandable  info, shows brief information about the file (listed)
+echo    -nt,  --neat                         neat, neatly organizes all the files in a horizontal list
+echo    -tr,  --legacy                       legacy, miniature file tree/legacy (better alternative is windows "tree" command)
+echo    -sbf, --searchbyfile    [FILEEXT]    search by file, shows only files with the specific file extention. 
+echo    -sbs, --sortbysize      [l\s]        sort the dir contents by size, l = large -^> small s = small -^> large (default:large-small)
+echo    -bd,  --breakdown       [FILENAME]   file breakdown, shows a whole lot of information about a specific file.
+echo    -pk,  --peek            [DIRNAME]    lists inside a dir, without being inside.
+echo    -r,  --recursive                     recursively lists everything from current dir, down.
+echo    -s,  --search           [FILENAME]   recursivly search for a specific filename, will also provide files with similiar names
 echo.
-echo    -tr,  --legacy               legacy, miniature file tree/legacy (better alternative is windows "tree" command)
 echo.
-echo    -sbf, --searchbyfile         search by file, shows only files with the specific file extention. 
-echo                                 REQUIRES FILETYPE ARG IN PLACE OF FILE ARG (.txt, .cmd, .json, etc...)
-echo.
-echo    -bd, --breakdown             file breakdown, shows a whole lot of information about a specific file.
-echo                                 REQUIRES FILE ARG IN PLACE OF FILE ARG (please include file ext to reduce ambiguity), (HS)
-echo.
-echo    -pk, --peek                  lists inside a dir, without being inside.
-echo                                 REQUIRES DIR NAME IN FILE
-echo.
-echo    -r, --recursive              recursively lists everything from current dir, down.
-echo                                 larger files may take longer to process.
-echo.
-echo    -s, --search                 recursivly search for a specific filename, will also provide files with similiar names
 echo.
 echo OTHER: Other commands that are for management, and other cases.
-echo    -?, -h, --help   shows help menu, Usage: ls --help [OTHER]
-echo                     -^> with no args, will shows general help
-echo                     -^> [-a]    help about everything
-echo                     -^> Specific Command Help (ls --help [-command])
+echo    [4mOPTION[0m                  [4mFILEARG[0m      [4mDefinition[0m
+echo    -?, --help              [OPTIONS]    shows help menu, Usage: %nameonly% --help 
+echo    -R, --readme                         redirects you to the readme file on www.github.com/sjapanwala
+echo    -l, --legal                          shows all legal information about this program.
+echo    -sec                    [ARG]        shows the error code once the program has finished execution
+echo        --logs                           recent update logs
+echo        --update                         apply updates  
+echo        --init                           initialize the program to work globally. NEEDS ADMINISTRATION ACCESS FOR SETUP.
 echo.
-echo    -R, --readme    redirects you to the readme file on www.github.com/sjapanwala
-echo.
-echo    -l, --legal     shows all legal information about this program.
-echo.
-echo    -sec            shows the error code once the program has finished execution
-echo                    (input into CODE section)
-echo.
-echo    --logs           recent update logs
-echo.
-echo    --update         apply updates
-echo.
-echo    --init            initialize the program to work globally. NEEDS ADMINISTRATION ACCESS FOR SETUP.
-echo.
-echo Notes,
-echo    -^> (HS) - Help Supported (-ex, -bd, -ls)
 goto eof
 
 :searchbyfile
