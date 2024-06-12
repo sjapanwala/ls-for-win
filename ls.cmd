@@ -259,16 +259,9 @@ goto eof
 
 
 :tree
-for %%I in ("%CD%") do set "currentDirName=%%~nI"
-    set "directory=%cd%"
-rem List all files and directories in the specified directory
-echo 🗁 %white%%cd%
-for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
-    echo %white%├─📄 %brightwhite%%%F%reg%
-)
-rem List all directories in the specified directory
-for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
-    echo %white%├─%brightwhite%🗁 %%D %reg%
+REM Call the tree command and filter output
+for /f "delims=" %%i in ('tree /f /a "%cd%"') do (
+    echo %%i
 )
 goto eof
 
@@ -601,7 +594,7 @@ set "filefound=False"
 set /a found_counter=0
 set /a scancount=0
 set /a similiar_counter=0
-for %%F in ("%filename%") do set possiblefile=%%~nFz
+for %%F in ("%filename%") do set possiblefile=%%~nF
 
 rem Start searching from the current directory
 for /R %%F in (*) do (
@@ -667,7 +660,7 @@ set "directory=%cd%"
 echo    %underline%Attributes%reg%  %underline%User%reg%   %underline%Size%reg%  %underline%Date Modified%reg%  %underline%Name%reg%%reg%
 for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
     set fileSize=0
-    for /f "tokens=3" %%S in ('dir /s /-c "%%D\*" ^| findstr /r /c:"bytes$"') do (
+    for /f "tokens=3" %%S in ('dir /s /-c "%%D\*" ^| findstr /r /c:"bytes$"2^>nul') do (
     set /a "fileSize+=%%S"
     )
     set creationDate=%%~tD
@@ -742,7 +735,7 @@ for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
             set fileformat=!fileSize!!fileunit!
         )
     )
-    for /f "delims=" %%a in ('powershell "(Get-Item '%%D').Mode"') do (
+    for /f "delims=" %%a in ('powershell "(Get-Item '%%D').Mode"2^>nul') do (
         set "permissions=%%a"
     )
     if !fileSize! lss 1 echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %cyan%%%D%reg%
@@ -819,7 +812,7 @@ for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
             set fileformat=!fileSize!!fileunit!
         )
     )
-    for /f "delims=" %%a in ('powershell "(Get-Item '%%F').Mode"') do (
+    for /f "delims=" %%a in ('powershell "(Get-Item '%%F').Mode"2^>nul') do (
         set "permissions=%%a"
     )
     echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %dkcyan%%%F%reg%
