@@ -1,17 +1,6 @@
 @echo off 
 setlocal enabledelayedexpansion
-chcp 65001>nul
-::s
-::s
-::s ___       __   ___  ________   ________  ________  ___       __   ________  ________      
-::s|\  \     |\  \|\  \|\   ___  \|\   ___ \|\   __  \|\  \     |\  \|\   ____\|\_____  \     
-::s\ \  \    \ \  \ \  \ \  \\ \  \ \  \_|\ \ \  \|\  \ \  \    \ \  \ \  \___|\|____|\  \    
-::s \ \  \  __\ \  \ \  \ \  \\ \  \ \  \ \\ \ \  \\\  \ \  \  __\ \  \ \_____  \    \ \__\   
-::s  \ \  \|\__\_\  \ \  \ \  \\ \  \ \  \_\\ \ \  \\\  \ \  \|\__\_\  \|____|\  \    \|__|   
-::s   \ \____________\ \__\ \__\\ \__\ \_______\ \_______\ \____________\____\_\  \       ___ 
-::s    \|____________|\|__|\|__| \|__|\|_______|\|_______|\|____________|\_________\     |\__\
-::s                                                                     \|_________|     \|__|
-::s                                                                                           
+chcp 65001>nul                                                                                          
 set version=0.1
 set red=[91m
 set yellow=[93m
@@ -26,6 +15,7 @@ set reg=[0m
 set dkpurple=[35m
 set dkblue=[34m
 set grey=[90m
+set underline=[4m
 set currentFile=%~n0%~x0
 set nameonly=%~n0
 :start_file
@@ -319,13 +309,15 @@ echo.
 echo    [4mOPTION[0m                  [4mFILEARG[0m      [4mDefinition[0m
 echo    -ex,  --expand                       expandable  info, shows brief information about the file (listed)
 echo    -nt,  --neat                         neat, neatly organizes all the files in a horizontal list
-echo    -tr,  --legacy                       legacy, miniature file tree/legacy (better alternative is windows "tree" command)
+::echo    -tr,  --legacy                       legacy, miniature file tree/legacy 
 echo    -sbf, --searchbyfile    [FILEEXT]    search by file, shows only files with the specific file extention. 
-echo    -sbs, --sortbysize      [l\s]        sort the dir contents by size, l = large -^> small s = small -^> large (default:large-small)
+echo    -sbs, --sortbysize      [l\s]        sort the dir contents by size, l = ↑-^>↓ s = ↓-^>↑ (default:↑-↓)
 echo    -bd,  --breakdown       [FILENAME]   file breakdown, shows a whole lot of information about a specific file.
 echo    -pk,  --peek            [DIRNAME]    lists inside a dir, without being inside.
 echo    -r,  --recursive                     recursively lists everything from current dir, down.
-echo    -s,  --search           [FILENAME]   recursivly search for a specific filename, will also provide files with similiar names
+echo    -s,  --search           [FILENAME]   recursivly search for a specific filename, provides similiar queries
+echo    -u,  --underline                     works the same as regular, ls but underlines file types
+echo    -l,  --long                          lists details about the dir, (-ex on steroids)
 echo.
 echo.
 echo.
@@ -333,11 +325,11 @@ echo OTHER: Other commands that are for management, and other cases.
 echo    [4mOPTION[0m                  [4mFILEARG[0m      [4mDefinition[0m
 echo    -?, --help              [OPTIONS]    shows help menu, Usage: %nameonly% --help 
 echo    -R, --readme                         redirects you to the readme file on www.github.com/sjapanwala
-echo    -l, --legal                          shows all legal information about this program.
+echo        --legal                          shows all legal information about this program.
 echo    -sec                    [ARG]        shows the error code once the program has finished execution
 echo        --logs                           recent update logs
 echo        --update                         apply updates  
-echo        --init                           initialize the program to work globally. NEEDS ADMINISTRATION ACCESS FOR SETUP.
+echo        --init                           initialize the program to work globally.
 echo.
 goto eof
 
@@ -601,9 +593,7 @@ goto eof
 
 :initializeprog
 :: check if init has already happened.
-if exist "C:\Windows\%currentFile%" (
-    echo ls: Program Is Already Initialized.
-)
+copy !currentFile! "C:\Windows\!currentFile!"
 goto eof
 
 :searchfile
@@ -676,6 +666,10 @@ set "directories="
 set "directory=%cd%"
 echo    %underline%Attributes%reg%  %underline%User%reg%   %underline%Size%reg%  %underline%Date Modified%reg%  %underline%Name%reg%%reg%
 for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
+    set fileSize=0
+    for /f "tokens=3" %%S in ('dir /s /-c "%%D\*" ^| findstr /r /c:"bytes$"') do (
+    set /a "fileSize+=%%S"
+    )
     set creationDate=%%~tD
     set monthnum=!creationDate:~0,2!
     if !monthnum!==01 (
@@ -714,16 +708,20 @@ for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
     if !monthnum!==12 (
         set month=Dec
     )
-    set fileSize=%%~zD
     if !fileSize! gtr 9999 (
         set /a fileSize=fileSize / 1024
         set fileunit=K
     )
-        if !fileSize! gtr 999 (
-            set /a fileSize=fileSize / 1024
-            set fileunit=M
-        )
-    if !fileSize! equ 0 (
+    if !fileSize! gtr 999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=M
+    )
+    if !fileSize! gtr 999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=G
+    )
+        
+    if !fileSize! lss 1 (
         set fileformat=----
     )
     if !fileSize! gtr 999 (
@@ -747,7 +745,8 @@ for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
     for /f "delims=" %%a in ('powershell "(Get-Item '%%D').Mode"') do (
         set "permissions=%%a"
     )
-    echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %cyan%%%D%reg%
+    if !fileSize! lss 1 echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %cyan%%%D%reg%
+    if !fileSize! gtr 0 echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %cyan%%%D\%reg%
 )
 for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
     set fileSize=%%~zF
@@ -792,10 +791,14 @@ for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
     if !fileSize! gtr 9999 (
         set /a fileSize=fileSize / 1024
         set fileunit=K
-        if !fileSize! gtr 999 (
-            set /a fileSize=fileSize / 1024
-            set fileunit=M
-        )
+    )
+    if !fileSize! gtr 999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=M
+    )
+    if !fileSize! gtr 999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=G
     )
     if !fileSize! equ 0 (
         set fileformat=----
