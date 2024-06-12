@@ -16,9 +16,11 @@ set version=0.1
 set red=[91m
 set yellow=[93m
 set green=[92m
+set dkgreen=[32m
 set blue=[94m
 set purple=[95m
 set cyan=[96m
+set dkcyan=[36m
 set white=[97m
 set reg=[0m
 set dkpurple=[35m
@@ -134,9 +136,6 @@ if "%1" == "--peek" (
         goto eof
     )
 )
-if "%1" == "-l" (
-    goto legal
-)
 if "%1" == "--legal" (
     goto legal
 )
@@ -152,7 +151,32 @@ if "%1" == "--update" (
 if "%1" == "--logs" (
     goto logs
 )
-
+if "%1" == "-u" (
+    if not "%2"=="" (
+        set fileext=%2
+        goto underline_file
+    ) else (
+        echo ls: Invalid Structure. no [FILETYPE] arguement given
+        echo ls: Please Try "%nameonly% --help"
+        goto eof
+    )
+)
+if "%1" == "--underline" (
+    if not "%2"=="" (
+        set fileext=%2
+        goto underline_file
+    ) else (
+        echo ls: Invalid Structure. no [FILETYPE] arguement given
+        echo ls: Please Try "%nameonly% --help"
+        goto eof
+    )
+)
+if "%1" == "--long" (
+    goto long
+)
+if "%1" == "-l" (
+    goto long
+)
 
 goto invalid
 
@@ -190,7 +214,7 @@ set "directory=%CD%"
 
 rem List all files and directories in the specified directory
 echo.
-echo %reg% 📂 %white%%cd%%reg%
+echo %reg% 🗁   %white%%cd%%reg%
 echo  %grey% │
 set /a counter=0
 set /a totalsize=0
@@ -248,13 +272,13 @@ goto eof
 for %%I in ("%CD%") do set "currentDirName=%%~nI"
     set "directory=%cd%"
 rem List all files and directories in the specified directory
-echo 📂 %white%%cd%
+echo 🗁 %white%%cd%
 for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
     echo %white%├─📄 %brightwhite%%%F%reg%
 )
 rem List all directories in the specified directory
 for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
-    echo %white%├─%brightwhite%📁 %%D %reg%
+    echo %white%├─%brightwhite%🗁 %%D %reg%
 )
 goto eof
 
@@ -400,7 +424,7 @@ echo    including Root File, File Name, File Size (B, MB, GB), Date Edited, and 
 echo.
 echo Model,
 echo.
-echo    %grey%   📂 C:\(Your Directory)
+echo    %grey%   🗁 C:\(Your Directory)
 echo    %grey%   │
 echo    %grey% 1 │ %red%Root Folder%reg% %yellow%File Name%reg% %green%File Size%reg% %blue%Date Created/Edited%reg% %purple%Path (file)%reg%
 echo    %grey% 2 │ %red%Root Folder%reg% %yellow%File Name%reg% %green%File Size%reg% %blue%Date Created/Edited%reg% %dkpurple%Path (dir)%reg%
@@ -587,7 +611,7 @@ set "filefound=False"
 set /a found_counter=0
 set /a scancount=0
 set /a similiar_counter=0
-for %%F in ("%filename%") do set possiblefile=%%~nF
+for %%F in ("%filename%") do set possiblefile=%%~nFz
 
 rem Start searching from the current directory
 for /R %%F in (*) do (
@@ -620,6 +644,183 @@ if !found_counter!==0 (
 )
 echo.
 echo  Scanned !scancount! File^(s^), Exact Files !found_counter! File^(s^), Similiar Files !similiar_counter! File^(s^)
+goto eof
+
+:underline_file
+rem Set current directory name
+for %%I in ("%CD%") do set "currentDirName=%%~nI"
+set "directory=%cd%"
+
+rem List all files in the specified directory
+set "files="
+for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
+    if !fileext! == %%~xF (
+        set "files=!files! [4m[33m%%F[0m "
+    ) else (
+        set "files=!files!  %%F"
+    )
+)
+if %errorlevel%==1 set "files="
+
+rem List all directories in the specified directory
+set "directories="
+for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
+    set "directories=!directories!  %%D"
+)
+echo %reg%%files%%dkblue%%directories%%reg%
+goto eof
+
+:long
+rem List all directories in the specified directory
+set "directories=" 
+set "directory=%cd%"
+echo    %underline%Attributes%reg%  %underline%User%reg%   %underline%Size%reg%  %underline%Date Modified%reg%  %underline%Name%reg%%reg%
+for /f "delims=" %%D in ('dir /b /ad "%directory%"2^>nul') do (
+    set creationDate=%%~tD
+    set monthnum=!creationDate:~0,2!
+    if !monthnum!==01 (
+        set month=Jan
+    )
+    if !monthnum!==02 (
+        set month=Feb
+    )
+    if !monthnum!==03 (
+        set month=Mar
+    )
+    if !monthnum!==04 (
+        set month=Apr
+    )
+    if !monthnum!==05 (
+        set month=May
+    )
+    if !monthnum!==06 (
+        set month=Jun
+    )
+    if !monthnum!==07 (
+        set month=Jul
+    )
+    if !monthnum!==08 (
+        set month=Aug
+    )
+    if !monthnum!==09 (
+        set month=Sep
+    )
+    if !monthnum!==10 (
+        set month=Oct
+    )
+    if !monthnum!==11 (
+        set month=Nov
+    )
+    if !monthnum!==12 (
+        set month=Dec
+    )
+    set fileSize=%%~zD
+    if !fileSize! gtr 9999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=K
+    )
+        if !fileSize! gtr 999 (
+            set /a fileSize=fileSize / 1024
+            set fileunit=M
+        )
+    if !fileSize! equ 0 (
+        set fileformat=----
+    )
+    if !fileSize! gtr 999 (
+        set fileformat=!fileSize!
+    )
+    if !fileSize! lss 10 (
+        if !fileSize! gtr 0 (
+            set fileformat=00!fileSize!!fileunit!
+        )
+    )
+    if !fileSize! lss 100 (
+        if !fileSize! gtr 10 (
+            set fileformat=0!fileSize!!fileunit!
+        )
+    )
+    if !fileSize! lss 1000 (
+        if !fileSize! gtr 100 (
+            set fileformat=!fileSize!!fileunit!
+        )
+    )
+    for /f "delims=" %%a in ('powershell "(Get-Item '%%D').Mode"') do (
+        set "permissions=%%a"
+    )
+    echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %cyan%%%D%reg%
+)
+for /f "delims=" %%F in ('dir /b /a:-d-h "%directory%"2^>nul') do (
+    set fileSize=%%~zF
+    set creationDate=%%~tF
+    set monthnum=!creationDate:~0,2!
+    if !monthnum!==01 (
+        set month=Jan
+    )
+    if !monthnum!==02 (
+        set month=Feb
+    )
+    if !monthnum!==03 (
+        set month=Mar
+    )
+    if !monthnum!==04 (
+        set month=Apr
+    )
+    if !monthnum!==05 (
+        set month=May
+    )
+    if !monthnum!==06 (
+        set month=Jun
+    )
+    if !monthnum!==07 (
+        set month=Jul
+    )
+    if !monthnum!==08 (
+        set month=Aug
+    )
+    if !monthnum!==09 (
+        set month=Sep
+    )
+    if !monthnum!==10 (
+        set month=Oct
+    )
+    if !monthnum!==11 (
+        set month=Nov
+    )
+    if !monthnum!==12 (
+        set month=Dec
+    )
+    if !fileSize! gtr 9999 (
+        set /a fileSize=fileSize / 1024
+        set fileunit=K
+        if !fileSize! gtr 999 (
+            set /a fileSize=fileSize / 1024
+            set fileunit=M
+        )
+    )
+    if !fileSize! equ 0 (
+        set fileformat=----
+    )
+    if !fileSize! gtr 999 (
+        set fileformat=!fileSize!
+    )
+    if !fileSize! lss 10 (
+        set fileformat=00!fileSize!!fileunit!
+    )
+    if !fileSize! lss 100 (
+        if !fileSize! gtr 10 (
+            set fileformat=0!fileSize!!fileunit!
+        )
+    )
+    if !fileSize! lss 1000 (
+        if !fileSize! gtr 100 (
+            set fileformat=!fileSize!!fileunit!
+        )
+    )
+    for /f "delims=" %%a in ('powershell "(Get-Item '%%F').Mode"') do (
+        set "permissions=%%a"
+    )
+    echo      %yellow%!permissions!%reg%    %red%%username%%reg%  %dkgreen%!fileformat!%reg%  %blue%!creationDate:~3,2! !month! %dkblue%!creationDate:~12,6!%reg%   %dkcyan%%%F%reg%
+)
 goto eof
 
 
